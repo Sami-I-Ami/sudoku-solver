@@ -24,6 +24,6 @@ module.exports = function (app) {
         res.json({error: message});
         return;
       }
-      console.log(solver.checkColPlacement(puzzle, "C", 9, 2));
+      console.log(solver.checkRegionPlacement(puzzle, "H", 9, 6));
     });
 };

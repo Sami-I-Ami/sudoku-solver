@@ -1,6 +1,19 @@
 class SudokuSolver {
 
   // added functions
+  // convert row letter to number
+  rowLetterToNumber(row) {
+  const rows = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
+  return rows.findIndex((rowLabel) => rowLabel === row);
+  }
+
+  // remove number if checking coordinate
+  replaceCoordinate(string, index) {
+    string = string.split("");
+    string[index] = ".";
+    return string.join("");
+  }
+
   // tests if value will not invalidate string for zone
   stringCheck(zoneString, zone, value) {
     const numRegex = /[0-9]+/g;
@@ -10,16 +23,11 @@ class SudokuSolver {
       if (numString[i] == value) {
         return [false, zone];
       }
+  
     }
 
     // valid
     return [true, ""];
-  }
-
-  // convert row letter to number
-  rowLetterToNumber(row) {
-    const rows = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
-    return rows.findIndex((rowLabel) => rowLabel === row);
   }
 
   // original functions
@@ -48,9 +56,7 @@ class SudokuSolver {
 
     // remove from list if num is already in coordinate (for checks only)
     if (rowString[column - 1] !== ".") {
-      rowString = rowString.split("");
-      rowString[column - 1] = ".";
-      rowString = rowString.join("");
+      rowString = this.replaceCoordinate(rowString, column - 1);
     }
 
     // check if number matches any other
@@ -69,9 +75,7 @@ class SudokuSolver {
     
     // remove from list if num is already in coordinate (for checks only)
     if (colString[rowNum] !== ".") {
-      colString = colString.split("");
-      colString[rowNum] = ".";
-      colString = colString.join("");
+      colString = this.replaceCoordinate(colString, rowNum);
     }
 
     // check if number matches any other
@@ -79,7 +83,29 @@ class SudokuSolver {
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
+    // convert row to number
+    const rowNum = this.rowLetterToNumber(row);
 
+    // find region
+    const regionSeparators = [[0, 1, 2], [3, 4, 5], [6, 7, 8]];
+    const rowRegion = regionSeparators.find((group) => group.includes(rowNum));
+    const colRegion = regionSeparators.find((group) => group.includes(column - 1));
+    const startNum = rowRegion[0] * 9 + colRegion[0];
+    let regionString = "";
+    for (let i = startNum; regionString.length < 9; i += 9) {
+      regionString += puzzleString.slice(i, i + 3);
+    }
+    
+    // remove from list if num is already in coordinate (for checks only)
+    const rowIndex = rowRegion.indexOf(rowNum);
+    const colIndex = colRegion.indexOf(column - 1);
+    if (regionString[rowIndex * 3 + colIndex] !== ".") {
+      regionString = this.replaceCoordinate(regionString, rowIndex * 3 + colIndex);
+    }
+    
+
+    // check if number matches any other
+    return this.stringCheck(regionString, "region", value);
   }
 
   solve(puzzleString) {
