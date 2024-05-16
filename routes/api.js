@@ -24,6 +24,6 @@ module.exports = function (app) {
         res.json({error: message});
         return;
       }
-      console.log(solver.checkRowPlacement(puzzle, "D", 5, 6));
+      console.log(solver.checkColPlacement(puzzle, "C", 9, 2));
     });
 };

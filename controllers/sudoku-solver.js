@@ -52,13 +52,30 @@ class SudokuSolver {
       rowString[column - 1] = ".";
       rowString = rowString.join("");
     }
-    
+
     // check if number matches any other
     return this.stringCheck(rowString, "row", value);
   }
 
   checkColPlacement(puzzleString, row, column, value) {
+    // convert row to number
+    const rowNum = this.rowLetterToNumber(row);
 
+    // find column
+    let colString = "";
+    for (let i = column - 1; colString.length < 9; i += 9) {
+      colString += puzzleString[i];
+    }
+    
+    // remove from list if num is already in coordinate (for checks only)
+    if (colString[rowNum] !== ".") {
+      colString = colString.split("");
+      colString[rowNum] = ".";
+      colString = colString.join("");
+    }
+
+    // check if number matches any other
+    return this.stringCheck(colString, "column", value);
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
