@@ -24,6 +24,16 @@ module.exports = function (app) {
         res.json({error: message});
         return;
       }
-      console.log(solver.checkRegionPlacement(puzzle, "H", 9, 6));
+
+      let puzzleArr = [...puzzle]; // since strings are not mutable
+      solver.solve(puzzleArr);
+      const solvedPuzzle = puzzleArr.join("");
+
+      if (solvedPuzzle.includes(".")) {
+        res.json({error: "Puzzle cannot be solved"});
+        return;
+      } else {
+        res.json({solution: solvedPuzzle});
+      }
     });
 };
